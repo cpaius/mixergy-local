@@ -1,7 +1,9 @@
 {
   "domain": "mixergy_local",
   "name": "Mixergy Local",
-  "codeowners": ["@cpaius"],
+  "codeowners": [
+    "@cpaius"
+  ],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/cpaius/mixergy-local",
@@ -9,5 +11,5 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/cpaius/mixergy-local/issues",
   "requirements": [],
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
