@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mixergy Local Setup",
+        "description": "Enter the IP address of your Mixergy Pi controller",
+        "data": {
+          "host": "IP Address"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to Mixergy Pi - check the IP address",
+      "invalid_response": "Connected but did not get expected data",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "This Mixergy tank is already configured"
+    }
+  }
+}
