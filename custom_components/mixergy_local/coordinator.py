@@ -1,9 +1,9 @@
 """Mixergy Local - Data coordinator."""
 from __future__ import annotations
+import asyncio
 import logging
 from datetime import timedelta
 import aiohttp
-import async_timeout
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -20,7 +20,7 @@ class MixergyLocalCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> dict:
         try:
-            async with async_timeout.timeout(10):
+            async with asyncio.timeout(10):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(f"{self._base_url}/status") as resp:
                         if resp.status != 200:

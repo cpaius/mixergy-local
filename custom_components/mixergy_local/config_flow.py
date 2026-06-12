@@ -1,12 +1,12 @@
 """Mixergy Local - Config flow."""
 from __future__ import annotations
+import asyncio
 import logging
 import aiohttp
-import async_timeout
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST
-from homeassistant.data_entry_flow import FlowResult
+from homeassistant.data_entry_flow import AbortFlow, FlowResult
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ class MixergyLocalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             host = user_input[CONF_HOST].strip()
             try:
-                async with async_timeout.timeout(10):
+                async with asyncio.timeout(10):
                     async with aiohttp.ClientSession() as session:
                         async with session.get(f"http://{host}/status") as resp:
                             if resp.status == 200:
@@ -35,6 +35,8 @@ class MixergyLocalConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                                 errors["base"] = "cannot_connect"
             except aiohttp.ClientError:
                 errors["base"] = "cannot_connect"
+            except AbortFlow:
+                raise
             except Exception:
                 errors["base"] = "unknown"
         return self.async_show_form(step_id="user", data_schema=DATA_SCHEMA, errors=errors)

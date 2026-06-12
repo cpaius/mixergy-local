@@ -1,0 +1,6 @@
+{
+  "name": "Mixergy Local",
+  "homeassistant": "2026.6.2",
+  "hacs": "1.32.0",
+  "render_readme": true
+}
