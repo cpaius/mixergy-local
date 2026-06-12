@@ -25,15 +25,14 @@ SENSOR_DESCRIPTIONS = (
 )
 
 MEASUREMENT_SENSOR_DESCRIPTIONS = (
-    MixergyLocalSensorDescription(key="current_power", name="Current Power", native_unit_of_measurement=UnitOfPower.WATT, device_class=SensorDeviceClass.POWER, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("cp"), icon="mdi:lightning-bolt"),
-    MixergyLocalSensorDescription(key="discharge_power", name="Discharge Power", native_unit_of_measurement=UnitOfPower.WATT, device_class=SensorDeviceClass.POWER, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("dp"), icon="mdi:lightning-bolt-outline"),
+    MixergyLocalSensorDescription(key="immersion_power", name="Immersion Power", native_unit_of_measurement=UnitOfPower.WATT, device_class=SensorDeviceClass.POWER, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("dp"), icon="mdi:heating-coil"),
     MixergyLocalSensorDescription(key="frequency", name="Grid Frequency", native_unit_of_measurement=UnitOfFrequency.HERTZ, device_class=SensorDeviceClass.FREQUENCY, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("f"), icon="mdi:sine-wave"),
     MixergyLocalSensorDescription(key="charge_rt", name="Charge (Realtime)", native_unit_of_measurement=PERCENTAGE, device_class=SensorDeviceClass.BATTERY, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("soc"), icon="mdi:water-boiler"),
     MixergyLocalSensorDescription(key="top_temp", name="Top Temperature", native_unit_of_measurement=UnitOfTemperature.CELSIUS, device_class=SensorDeviceClass.TEMPERATURE, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("tt"), icon="mdi:thermometer"),
     MixergyLocalSensorDescription(key="flow_temp", name="Flow Temperature", native_unit_of_measurement=UnitOfTemperature.CELSIUS, device_class=SensorDeviceClass.TEMPERATURE, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("ft"), icon="mdi:thermometer"),
-    MixergyLocalSensorDescription(key="ambient_temp", name="Ambient Temperature", native_unit_of_measurement=UnitOfTemperature.CELSIUS, device_class=SensorDeviceClass.TEMPERATURE, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("bt"), icon="mdi:thermometer-low"),
+    MixergyLocalSensorDescription(key="bottom_temp", name="Bottom Temperature", native_unit_of_measurement=UnitOfTemperature.CELSIUS, device_class=SensorDeviceClass.TEMPERATURE, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("bt"), icon="mdi:thermometer-low"),
     MixergyLocalSensorDescription(key="voltage", name="Voltage", native_unit_of_measurement=UnitOfElectricPotential.VOLT, device_class=SensorDeviceClass.VOLTAGE, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("v"), icon="mdi:flash"),
-    MixergyLocalSensorDescription(key="current", name="Current", native_unit_of_measurement=UnitOfElectricCurrent.AMPERE, device_class=SensorDeviceClass.CURRENT, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("i"), icon="mdi:current-ac"),
+    MixergyLocalSensorDescription(key="immersion_current", name="Immersion Current", native_unit_of_measurement=UnitOfElectricCurrent.AMPERE, device_class=SensorDeviceClass.CURRENT, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("i"), icon="mdi:current-ac"),
 )
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:

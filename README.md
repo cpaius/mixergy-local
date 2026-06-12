@@ -26,6 +26,8 @@ During setup, enter the IP address of your Mixergy Pi controller (for example `1
 
 ## Entities
 
+### Status (polled every 30 s)
+
 | Entity | Description |
 | --- | --- |
 | `sensor.*_tank_charge` | Tank charge level (%) |
@@ -35,6 +37,24 @@ During setup, enter the IP address of your Mixergy Pi controller (for example `1
 | `sensor.*_immersion` | Immersion heater state |
 | `binary_sensor.*_immersion_active` | Whether immersion is heating |
 | `binary_sensor.*_indirect_active` | Whether indirect heating is active |
+
+### Measurements (real-time stream)
+
+| Entity | Description |
+| --- | --- |
+| `sensor.*_current_power` | Whole-house power draw (W) |
+| `sensor.*_discharge_power` | Discharge power (W) |
+| `sensor.*_frequency` | Grid frequency (Hz) |
+| `sensor.*_charge_rt` | Tank charge — realtime (%) |
+| `sensor.*_top_temp` | Top of tank temperature (°C) |
+| `sensor.*_flow_temp` | Flow temperature (°C) |
+| `sensor.*_bottom_temp` | Bottom of tank temperature (°C) |
+| `sensor.*_voltage` | Supply voltage (V) |
+| `sensor.*_current` | Supply current (A) |
+| `binary_sensor.*_operating` | Tank actively heating |
+| `binary_sensor.*_direct_relay` | Direct relay output state |
+| `binary_sensor.*_indirect_relay` | Indirect relay output state |
+| `binary_sensor.*_pump` | Pump running |
 
 ## Development
 

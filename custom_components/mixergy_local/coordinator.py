@@ -76,7 +76,10 @@ class MixergyMeasurementsCoordinator(DataUpdateCoordinator):
                                     obj, idx = decoder.raw_decode(buf)
                                     buf = buf[idx:]
                                     self._accumulated.update(obj)
-                                    self.async_set_updated_data(self._accumulated.copy())
+                                    # Only push to HA on slow messages (~500ms cadence).
+                                    # Fast power/frequency messages (100ms) just accumulate.
+                                    if "soc" in obj or "dro" in obj:
+                                        self.async_set_updated_data(self._accumulated.copy())
                                 except json.JSONDecodeError:
                                     break
             except asyncio.CancelledError:

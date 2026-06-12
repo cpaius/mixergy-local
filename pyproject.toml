@@ -9,8 +9,8 @@ requires-python = ">=3.12"
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
-pythonpath = ["."]
-
+pythonpath = ["."
+]
 [tool.ruff]
 target-version = "py312"
 line-length = 88

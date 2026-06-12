@@ -52,12 +52,6 @@ async def test_setup_creates_entities(
     assert immersion_entity is not None
     assert hass.states.get(immersion_entity).state == "off"
 
-    power_entity = registry.async_get_entity_id(
-        "sensor", "mixergy_local", f"{mock_config_entry.entry_id}_current_power"
-    )
-    assert power_entity is not None
-    assert hass.states.get(power_entity).state == "2360.0"
-
     top_temp_entity = registry.async_get_entity_id(
         "sensor", "mixergy_local", f"{mock_config_entry.entry_id}_top_temp"
     )
