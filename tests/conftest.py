@@ -31,6 +31,23 @@ MOCK_STATUS = {
     },
 }
 
+MOCK_MEASUREMENTS = {
+    "cp": 2360.0,
+    "dp": 0.0,
+    "f": 50.1034,
+    "soc": 78.7,
+    "tt": 55.0,
+    "ft": 54.7,
+    "bt": 22.0,
+    "op": False,
+    "v": 243.64,
+    "i": 0.0,
+    "dro": False,
+    "iro": False,
+    "po": False,
+    "ts": 401,
+}
+
 
 @pytest.fixture
 def hass_config_dir() -> str:

@@ -9,7 +9,6 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
-from .coordinator import MixergyLocalCoordinator
 
 @dataclass
 class MixergyLocalBinarySensorDescription(BinarySensorEntityDescription):
@@ -18,12 +17,21 @@ class MixergyLocalBinarySensorDescription(BinarySensorEntityDescription):
 BINARY_SENSOR_DESCRIPTIONS = (
     MixergyLocalBinarySensorDescription(key="immersion_active", name="Immersion Active", device_class=BinarySensorDeviceClass.HEAT, value_fn=lambda d: d.get("state", {}).get("current", {}).get("immersion", "Off") != "Off", icon="mdi:lightning-bolt"),
     MixergyLocalBinarySensorDescription(key="indirect_active", name="Indirect Heating Active", device_class=BinarySensorDeviceClass.HEAT, value_fn=lambda d: d.get("state", {}).get("relay", {}).get("heat_source", "Off") == "Indirect", icon="mdi:radiator"),
-    MixergyLocalBinarySensorDescription(key="system_on", name="System On", device_class=BinarySensorDeviceClass.POWER, value_fn=lambda d: d.get("state", {}).get("system", "Off") == "On", icon="mdi:power"),
+)
+
+MEASUREMENT_BINARY_SENSOR_DESCRIPTIONS = (
+    MixergyLocalBinarySensorDescription(key="operating", name="Operating", device_class=BinarySensorDeviceClass.RUNNING, value_fn=lambda d: bool(d.get("op", False)), icon="mdi:water-boiler"),
+    MixergyLocalBinarySensorDescription(key="direct_relay", name="Direct Relay", device_class=BinarySensorDeviceClass.POWER, value_fn=lambda d: bool(d.get("dro", False)), icon="mdi:electric-switch"),
+    MixergyLocalBinarySensorDescription(key="indirect_relay", name="Indirect Relay", device_class=BinarySensorDeviceClass.HEAT, value_fn=lambda d: bool(d.get("iro", False)), icon="mdi:radiator"),
+    MixergyLocalBinarySensorDescription(key="pump", name="Pump", device_class=BinarySensorDeviceClass.RUNNING, value_fn=lambda d: bool(d.get("po", False)), icon="mdi:pump"),
 )
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    coordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities(MixergyLocalBinarySensor(coordinator, desc, entry) for desc in BINARY_SENSOR_DESCRIPTIONS)
+    from .__init__ import MixergyEntryData
+    entry_data: MixergyEntryData = hass.data[DOMAIN][entry.entry_id]
+    entities: list = [MixergyLocalBinarySensor(entry_data.coordinator, desc, entry) for desc in BINARY_SENSOR_DESCRIPTIONS]
+    entities += [MixergyLocalBinarySensor(entry_data.measurements, desc, entry) for desc in MEASUREMENT_BINARY_SENSOR_DESCRIPTIONS]
+    async_add_entities(entities)
 
 class MixergyLocalBinarySensor(CoordinatorEntity, BinarySensorEntity):
     entity_description: MixergyLocalBinarySensorDescription

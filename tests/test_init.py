@@ -2,13 +2,25 @@
 
 from __future__ import annotations
 
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
-from tests.conftest import MOCK_STATUS, TEST_HOST, mock_aiohttp_get
+from tests.conftest import MOCK_MEASUREMENTS, MOCK_STATUS, TEST_HOST, mock_aiohttp_get
+
+
+def _patch_stream(measurements: dict):
+    """Patch the measurements coordinator stream so it immediately sets data."""
+
+    async def _fake_start_stream(self):
+        self.async_set_updated_data(measurements)
+
+    return patch(
+        "custom_components.mixergy_local.coordinator.MixergyMeasurementsCoordinator.async_start_stream",
+        _fake_start_stream,
+    )
 
 
 async def test_setup_creates_entities(
@@ -20,7 +32,7 @@ async def test_setup_creates_entities(
     with patch(
         "custom_components.mixergy_local.coordinator.aiohttp.ClientSession",
         return_value=mock_aiohttp_get(MOCK_STATUS),
-    ):
+    ), _patch_stream(MOCK_MEASUREMENTS):
         assert await hass.config_entries.async_setup(mock_config_entry.entry_id)
         await hass.async_block_till_done()
 
@@ -40,13 +52,23 @@ async def test_setup_creates_entities(
     assert immersion_entity is not None
     assert hass.states.get(immersion_entity).state == "off"
 
-    system_on_entity = registry.async_get_entity_id(
-        "binary_sensor",
-        "mixergy_local",
-        f"{mock_config_entry.entry_id}_system_on",
+    power_entity = registry.async_get_entity_id(
+        "sensor", "mixergy_local", f"{mock_config_entry.entry_id}_current_power"
     )
-    assert system_on_entity is not None
-    assert hass.states.get(system_on_entity).state == "on"
+    assert power_entity is not None
+    assert hass.states.get(power_entity).state == "2360.0"
+
+    top_temp_entity = registry.async_get_entity_id(
+        "sensor", "mixergy_local", f"{mock_config_entry.entry_id}_top_temp"
+    )
+    assert top_temp_entity is not None
+    assert hass.states.get(top_temp_entity).state == "55.0"
+
+    pump_entity = registry.async_get_entity_id(
+        "binary_sensor", "mixergy_local", f"{mock_config_entry.entry_id}_pump"
+    )
+    assert pump_entity is not None
+    assert hass.states.get(pump_entity).state == "off"
 
 
 async def test_unload_removes_entities(
@@ -58,7 +80,7 @@ async def test_unload_removes_entities(
     with patch(
         "custom_components.mixergy_local.coordinator.aiohttp.ClientSession",
         return_value=mock_aiohttp_get(MOCK_STATUS),
-    ):
+    ), _patch_stream(MOCK_MEASUREMENTS):
         assert await hass.config_entries.async_setup(mock_config_entry.entry_id)
         await hass.async_block_till_done()
 
@@ -68,8 +90,12 @@ async def test_unload_removes_entities(
     )
     assert hass.states.get(charge_entity) is not None
 
-    assert await hass.config_entries.async_unload(mock_config_entry.entry_id)
-    await hass.async_block_till_done()
+    with patch(
+        "custom_components.mixergy_local.coordinator.MixergyMeasurementsCoordinator.async_stop_stream",
+        new_callable=AsyncMock,
+    ):
+        assert await hass.config_entries.async_unload(mock_config_entry.entry_id)
+        await hass.async_block_till_done()
 
     assert mock_config_entry.state is ConfigEntryState.NOT_LOADED
     assert hass.states.get(charge_entity).state == "unavailable"

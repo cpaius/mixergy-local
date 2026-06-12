@@ -31,6 +31,8 @@ async def test_user_step_success(hass: HomeAssistant, enable_custom_integrations
     with patch(
         "custom_components.mixergy_local.config_flow.aiohttp.ClientSession",
         return_value=mock_aiohttp_get(MOCK_STATUS),
+    ), patch(
+        "custom_components.mixergy_local.coordinator.MixergyMeasurementsCoordinator.async_start_stream",
     ):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -93,6 +95,8 @@ async def test_user_step_already_configured(
     with patch(
         "custom_components.mixergy_local.coordinator.aiohttp.ClientSession",
         return_value=mock_aiohttp_get(MOCK_STATUS),
+    ), patch(
+        "custom_components.mixergy_local.coordinator.MixergyMeasurementsCoordinator.async_start_stream",
     ):
         assert await hass.config_entries.async_setup(mock_config_entry.entry_id)
         await hass.async_block_till_done()

@@ -4,13 +4,13 @@ from dataclasses import dataclass
 from typing import Any
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import PERCENTAGE
+from homeassistant.const import PERCENTAGE, UnitOfElectricCurrent, UnitOfElectricPotential, UnitOfFrequency, UnitOfPower, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
-from .coordinator import MixergyLocalCoordinator
+from .coordinator import MixergyLocalCoordinator, MixergyMeasurementsCoordinator
 
 @dataclass
 class MixergyLocalSensorDescription(SensorEntityDescription):
@@ -24,9 +24,24 @@ SENSOR_DESCRIPTIONS = (
     MixergyLocalSensorDescription(key="immersion", name="Immersion State", value_fn=lambda d: d.get("state", {}).get("current", {}).get("immersion"), icon="mdi:lightning-bolt"),
 )
 
+MEASUREMENT_SENSOR_DESCRIPTIONS = (
+    MixergyLocalSensorDescription(key="current_power", name="Current Power", native_unit_of_measurement=UnitOfPower.WATT, device_class=SensorDeviceClass.POWER, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("cp"), icon="mdi:lightning-bolt"),
+    MixergyLocalSensorDescription(key="discharge_power", name="Discharge Power", native_unit_of_measurement=UnitOfPower.WATT, device_class=SensorDeviceClass.POWER, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("dp"), icon="mdi:lightning-bolt-outline"),
+    MixergyLocalSensorDescription(key="frequency", name="Grid Frequency", native_unit_of_measurement=UnitOfFrequency.HERTZ, device_class=SensorDeviceClass.FREQUENCY, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("f"), icon="mdi:sine-wave"),
+    MixergyLocalSensorDescription(key="charge_rt", name="Charge (Realtime)", native_unit_of_measurement=PERCENTAGE, device_class=SensorDeviceClass.BATTERY, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("soc"), icon="mdi:water-boiler"),
+    MixergyLocalSensorDescription(key="top_temp", name="Top Temperature", native_unit_of_measurement=UnitOfTemperature.CELSIUS, device_class=SensorDeviceClass.TEMPERATURE, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("tt"), icon="mdi:thermometer"),
+    MixergyLocalSensorDescription(key="flow_temp", name="Flow Temperature", native_unit_of_measurement=UnitOfTemperature.CELSIUS, device_class=SensorDeviceClass.TEMPERATURE, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("ft"), icon="mdi:thermometer"),
+    MixergyLocalSensorDescription(key="ambient_temp", name="Ambient Temperature", native_unit_of_measurement=UnitOfTemperature.CELSIUS, device_class=SensorDeviceClass.TEMPERATURE, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("bt"), icon="mdi:thermometer-low"),
+    MixergyLocalSensorDescription(key="voltage", name="Voltage", native_unit_of_measurement=UnitOfElectricPotential.VOLT, device_class=SensorDeviceClass.VOLTAGE, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("v"), icon="mdi:flash"),
+    MixergyLocalSensorDescription(key="current", name="Current", native_unit_of_measurement=UnitOfElectricCurrent.AMPERE, device_class=SensorDeviceClass.CURRENT, state_class=SensorStateClass.MEASUREMENT, value_fn=lambda d: d.get("i"), icon="mdi:current-ac"),
+)
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    coordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities(MixergyLocalSensor(coordinator, desc, entry) for desc in SENSOR_DESCRIPTIONS)
+    from .__init__ import MixergyEntryData
+    entry_data: MixergyEntryData = hass.data[DOMAIN][entry.entry_id]
+    entities: list = [MixergyLocalSensor(entry_data.coordinator, desc, entry) for desc in SENSOR_DESCRIPTIONS]
+    entities += [MixergyLocalSensor(entry_data.measurements, desc, entry) for desc in MEASUREMENT_SENSOR_DESCRIPTIONS]
+    async_add_entities(entities)
 
 class MixergyLocalSensor(CoordinatorEntity, SensorEntity):
     entity_description: MixergyLocalSensorDescription

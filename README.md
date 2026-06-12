@@ -35,7 +35,6 @@ During setup, enter the IP address of your Mixergy Pi controller (for example `1
 | `sensor.*_immersion` | Immersion heater state |
 | `binary_sensor.*_immersion_active` | Whether immersion is heating |
 | `binary_sensor.*_indirect_active` | Whether indirect heating is active |
-| `binary_sensor.*_system_on` | Whether the system is on |
 
 ## Development
 
