@@ -43,7 +43,6 @@ During setup, enter the IP address of your Mixergy Pi controller (for example `1
 | `sensor.*_current_power` | Whole-house power draw (W) |
 | `sensor.*_discharge_power` | Discharge power (W) |
 | `sensor.*_frequency` | Grid frequency (Hz) |
-| `sensor.*_charge_rt` | Tank charge — realtime (%) |
 | `sensor.*_top_temp` | Top of tank temperature (°C) |
 | `sensor.*_flow_temp` | Flow temperature (°C) |
 | `sensor.*_bottom_temp` | Bottom of tank temperature (°C) |
