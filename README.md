@@ -1,9 +1,7 @@
 # Mixergy Local
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-[![Validate with hassfest](https://github.com/cpaius/mixergy-local/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/cpaius/mixergy-local/actions/workflows/hassfest.yaml)
-[![Validate with HACS](https://github.com/cpaius/mixergy-local/actions/workflows/hacs.yml/badge.svg)](https://github.com/cpaius/mixergy-local/actions/workflows/hacs.yml)
-[![Run tests](https://github.com/cpaius/mixergy-local/actions/workflows/pytest.yml/badge.svg)](https://github.com/cpaius/mixergy-local/actions/workflows/pytest.yml)
+[![Validate](https://github.com/cpaius/mixergy-local/actions/workflows/validate.yml/badge.svg)](https://github.com/cpaius/mixergy-local/actions/workflows/validate.yml)
 
 Local Home Assistant integration for [Mixergy](https://mixergy.co.uk/) smart hot water tanks, polling the on-tank controller API directly on your LAN.
 
